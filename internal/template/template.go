@@ -27,7 +27,11 @@ func New(vanityRoot string, pkgs []config.Package) Vanity {
 	return Vanity{
 		vanityRoot: vanityRoot,
 		pkgs:       pkgs,
-		tpl:        nil,
+		tpl: template.New("_").Funcs(map[string]any{
+			"unescapeHTML": func(s string) template.HTML {
+				return template.HTML(s) //nolint:gosec
+			},
+		}),
 	}
 }
 
@@ -79,7 +83,7 @@ func WriteTemplatesDir(dir string, overwrite bool, perms os.FileMode) error {
 // Override directory may contain subset of templates. It only expects `.gohtml`
 // files.
 func (v *Vanity) ParseTemplates(overrideDir string) (err error) {
-	v.tpl, err = template.ParseFS(tpls, buildTemplatePaths("templates")...)
+	v.tpl, err = v.tpl.ParseFS(tpls, buildTemplatePaths("templates")...)
 	if err != nil {
 		return e.NewFrom("failed to parse template", err)
 	}
@@ -99,6 +103,12 @@ func (v *Vanity) ParseTemplates(overrideDir string) (err error) {
 			}
 		}
 	}
+
+	v.tpl = v.tpl.Funcs(map[string]any{
+		"unescapeHTML": func(s string) template.HTML {
+			return template.HTML(s) //nolint:gosec
+		},
+	})
 
 	return nil
 }

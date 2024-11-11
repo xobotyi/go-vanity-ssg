@@ -34,6 +34,7 @@
             max-width: 70rem;
             margin: 0 auto;
             border-spacing: unset;
+            table-layout: fixed;
         }
 
         thead td {
@@ -52,10 +53,6 @@
             border-top: 1px solid #555;
         }
 
-        .cell-info {
-            width: 50%;
-        }
-
         .package-fqn {
             font-weight: 700;
         }
@@ -67,14 +64,20 @@
         }
 
         .cell-src {
-            width: 40%;
             font-size: .75rem;
             vertical-align: bottom;
         }
 
         .cell-docs {
-            width: 20%;
             vertical-align: bottom;
+        }
+
+        .swags {
+            display: inline-flex;
+            gap: .25rem;
+            width: 100%;
+            justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .credits {
@@ -95,9 +98,8 @@
 <table>
     <thead>
     <tr>
-        <td>Package</td>
-        <td>Sources</td>
-        <td>Docs</td>
+        <td width="45%">Package</td>
+        <td width="35%">Sources</td>
     </tr>
     </thead>
     <tbody>
@@ -108,8 +110,15 @@
                 <div class="package-description">{{.Package.Description}}</div>
             </td>
             <td class="cell-src"><a href="{{.Package.Source.VcsURI}}">{{.Package.Source.VcsURI}}</a></td>
-            <td class="cell-docs"><a href="https://pkg.go.dev/{{.FQN}}"><img src="https://pkg.go.dev/badge/{{.FQN}}.svg"
-                                                                             alt="Go Reference"></a></td>
+            <td class="cell-docs">
+                <div class="swags">
+                    {{range .Package.Source.Swag}}
+                        {{. | unescapeHTML}}
+                    {{end}}
+                    <a href="https://pkg.go.dev/{{.FQN}}"><img src="https://pkg.go.dev/badge/{{.FQN}}.svg"
+                                                               alt="Go Reference"></a>
+                </div>
+            </td>
         </tr>
     {{end}}
     </tbody>

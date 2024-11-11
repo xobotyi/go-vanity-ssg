@@ -11,6 +11,8 @@ packages:
       uri: "https://github.com/GaijinEntertainment/golib"
       dir-uri: "https://github.com/GaijinEntertainment/golib{/dir}"
       file-uri: "https://github.com/GaijinEntertainment/golib{/dir}/{file}#L{line}"
+      swag:
+        - <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/GaijinEntertainment/golib?style=flat-square">
     private-source:
       vcs-type: "git"
       vcs-uri: "git+ssh://github.com/GaijinEntertainment/golib"
@@ -23,7 +25,8 @@ packages:
       uri: "https://github.com/GaijinEntertainment/go-exhaustruct"
       dir-uri: "https://github.com/GaijinEntertainment/go-exhaustruct{/dir}"
       file-uri: "https://github.com/GaijinEntertainment/go-exhaustruct{/dir}/{file}#L{line}"
-
+      swag:
+        - <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/GaijinEntertainment/go-exhaustruct?style=flat-square">
     private-source:
       vcs-type: "git"
       vcs-uri: "git+ssh://github.com/GaijinEntertainment/go-exhaustruct"
@@ -36,7 +39,8 @@ packages:
       uri: "https://github.com/GaijinEntertainment/go-nakedefer"
       dir-uri: "https://github.com/GaijinEntertainment/go-nakedefer{/dir}"
       file-uri: "https://github.com/GaijinEntertainment/go-nakedefer{/dir}/{file}#L{line}"
-
+      swag:
+        - <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/GaijinEntertainment/go-nakedefer?style=flat-square">
     private-source:
       vcs-type: "git"
       vcs-uri: "git+ssh://github.com/GaijinEntertainment/go-nakedefer"
