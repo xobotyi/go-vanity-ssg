@@ -5,6 +5,7 @@ import (
 	"embed"
 	"html/template"
 	"io/fs"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -17,12 +18,17 @@ import (
 )
 
 type Vanity struct {
-	pkgs []config.Package
-	tpl  *template.Template
+	vanityRoot string
+	pkgs       []config.Package
+	tpl        *template.Template
 }
 
-func New(pkgs []config.Package) Vanity {
-	return Vanity{pkgs: pkgs}
+func New(vanityRoot string, pkgs []config.Package) Vanity {
+	return Vanity{
+		vanityRoot: vanityRoot,
+		pkgs:       pkgs,
+		tpl:        nil,
+	}
 }
 
 //go:embed templates/*.gohtml
@@ -75,7 +81,7 @@ func WriteTemplatesDir(dir string, overwrite bool, perms os.FileMode) error {
 func (v *Vanity) ParseTemplates(overrideDir string) (err error) {
 	v.tpl, err = template.ParseFS(tpls, buildTemplatePaths("templates")...)
 	if err != nil {
-		return err
+		return e.NewFrom("failed to parse template", err)
 	}
 
 	if overrideDir != "" {
@@ -99,43 +105,45 @@ func (v *Vanity) ParseTemplates(overrideDir string) (err error) {
 
 type indexData struct {
 	Title    string
-	Packages []indexPackageData
-}
-
-type indexPackageData struct {
-	URI  string
-	Name string
+	Packages []packageData
 }
 
 func (v *Vanity) EmitIndex(outDir string) error {
-	id := indexData{
-		Title:    "TEST TITLE",
-		Packages: nil,
-	}
-
-	for _, pkg := range v.pkgs {
-		id.Packages = append(id.Packages, indexPackageData{
-			URI:  "",
-			Name: pkg.Name,
-		})
-	}
-
-	buf := &bytes.Buffer{}
-
-	if err := v.tpl.ExecuteTemplate(buf, indexTemplate, id); err != nil {
-		return e.NewFrom("failed to render index template", err)
-	}
-
-	err := os.WriteFile(path.Join(outDir, "index.html"), buf.Bytes(), 0644)
+	b, err := v.renderIndex()
 	if err != nil {
 		return err
+	}
+
+	err = os.WriteFile(path.Join(outDir, "index.html"), b, 0644) //nolint:mnd
+	if err != nil {
+		return e.NewFrom("failed to emit index file", err)
 	}
 
 	return nil
 }
 
 func (v *Vanity) renderIndex() ([]byte, error) {
-	return nil, nil
+	buf := &bytes.Buffer{}
+
+	id := indexData{
+		Title:    v.vanityRoot,
+		Packages: make([]packageData, 0, len(v.pkgs)),
+	}
+
+	for _, p := range v.pkgs {
+		pd, err := v.packageData(p)
+		if err != nil {
+			return nil, err
+		}
+
+		id.Packages = append(id.Packages, pd)
+	}
+
+	if err := v.tpl.ExecuteTemplate(buf, indexTemplate, id); err != nil {
+		return nil, e.NewFrom("failed to render index template", err)
+	}
+
+	return buf.Bytes(), nil
 }
 
 // EmitPackages render all packages from provided config and writes them into dir
@@ -147,19 +155,41 @@ func (v *Vanity) EmitPackages(outDir string) error {
 			return err
 		}
 
-		err = os.WriteFile(path.Join(outDir, path.Base(pkg.Name)+".html"), b, 0644)
+		err = os.WriteFile(path.Join(outDir, path.Base(pkg.Name)+".html"), b, 0644) //nolint:mnd
 		if err != nil {
-			return err
+			return e.NewFrom("failed to emit package file", err)
 		}
 	}
 
 	return nil
 }
 
+type packageData struct {
+	FQN string
+	config.Package
+}
+
+func (v *Vanity) packageData(p config.Package) (packageData, error) {
+	packageFQN, err := url.JoinPath(v.vanityRoot, p.Name)
+	if err != nil {
+		return packageData{}, e.NewFrom("failed to build package fully qualified name", err)
+	}
+
+	return packageData{
+		FQN:     packageFQN,
+		Package: p,
+	}, nil
+}
+
 func (v *Vanity) renderPackage(p config.Package) ([]byte, error) {
 	buf := &bytes.Buffer{}
 
-	if err := v.tpl.ExecuteTemplate(buf, packageTemplate, p); err != nil {
+	pd, err := v.packageData(p)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := v.tpl.ExecuteTemplate(buf, packageTemplate, pd); err != nil {
 		return nil, e.NewFrom("failed to render package template", err)
 	}
 

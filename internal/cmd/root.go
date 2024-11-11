@@ -87,7 +87,7 @@ func rootRunFn(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
-	vt := template.New(cfg.Packages)
+	vt := template.New(cfg.VanityRoot, cfg.Packages)
 
 	err = vt.ParseTemplates(cfg.TemplatesDir)
 	if err != nil {

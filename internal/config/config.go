@@ -12,6 +12,8 @@ type Config struct {
 	OutDir       string `yaml:"out-dir"`
 	TemplatesDir string `yaml:"templates-dir,omitempty"`
 
+	VanityRoot string `yaml:"vanity-root"`
+
 	Packages []Package `yaml:"packages"`
 }
 

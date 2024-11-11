@@ -1,15 +1,15 @@
-<html>
+<html lang="en">
 <head>
     <title>
-        {{- /*gotype: github.com/xobotyi/go-vanity-ssg/internal/config.Package*/ -}}
-        {{.Name}}
+        {{- /*gotype: github.com/xobotyi/go-vanity-ssg/internal/template.packageData*/ -}}
+        {{.FQN}}
     </title>
-    <meta name="go-import" content="{{.Name}} {{.Source.VcsType}} {{.Source.VcsURI}}">
+    <meta name="go-import" content="{{.FQN}} {{.Source.VcsType}} {{.Source.VcsURI}}">
     <meta name="go-source"
-          content="{{.Name}} {{.Source.URI}} {{.Source.DirURI}} {{.Source.FileURI}}">
-    <meta http-equiv="refresh" content="0; url=https://pkg.go.dev/{{.Name}}">
+          content="{{.FQN}} {{.Source.URI}} {{.Source.DirURI}} {{.Source.FileURI}}">
+    <meta http-equiv="refresh" content="0; url=https://pkg.go.dev/{{.FQN}}">
 </head>
 <body>
-Nothing to see here. Please <a href="https://pkg.go.dev/{{.Name}}">move along</a>.
+Nothing to see here. Please <a href="https://pkg.go.dev/{{.FQN}}">move along</a>.
 </body>
 </html>

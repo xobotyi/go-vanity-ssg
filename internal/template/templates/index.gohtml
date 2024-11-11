@@ -1,10 +1,121 @@
-<html>
+<html lang="en">
 <head>
+    <title>
+        {{- /*gotype: github.com/xobotyi/go-vanity-ssg/internal/template.indexData*/ -}}
+        {{.Title}}
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        html {
+            font-size: 16px;
+            font-family: "Fira Mono", monospace;
+            background: #232323;
+            color: #fafafa;
+        }
+
+        a {
+            color: #2169D6;
+        }
+
+        a:hover, a:focus {
+            color: #ccc;
+        }
+
+        body {
+            padding: 3rem 0;
+        }
+
+        table {
+            width: 100%;
+            max-width: 70rem;
+            margin: 0 auto;
+            border-spacing: unset;
+        }
+
+        thead td {
+            padding-bottom: 1rem;
+            color: #ccc;
+            text-transform: uppercase;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+
+        tbody > tr > td {
+            padding: 1rem 0;
+        }
+
+        tbody > tr + tr > td {
+            border-top: 1px solid #555;
+        }
+
+        .cell-info {
+            width: 50%;
+        }
+
+        .package-fqn {
+            font-weight: 700;
+        }
+
+        .package-description {
+            margin-top: .5rem;
+            color: #9a9a9a;
+            font-size: .75rem;
+        }
+
+        .cell-src {
+            width: 40%;
+            font-size: .75rem;
+            vertical-align: bottom;
+        }
+
+        .cell-docs {
+            width: 20%;
+            vertical-align: bottom;
+        }
+
+        .credits {
+            width: 100%;
+            text-align: center;
+            color: #555;
+            margin-top: 5rem;
+            font-size: .75rem;
+        }
+
+        .credits a {
+            color: inherit;
+        }
+    </style>
 </head>
+
 <body>
-{{- /*gotype: github.com/xobotyi/go-vanity-ssg/internal/template.indexData*/ -}}
-{{range .Packages}}
-    <div>{{.Name}}</div>
-{{end}}
+<table>
+    <thead>
+    <tr>
+        <td>Package</td>
+        <td>Sources</td>
+        <td>Docs</td>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .Packages}}
+        <tr>
+            <td class="cell-info">
+                <div class="package-fqn">{{.FQN}}</div>
+                <div class="package-description">{{.Package.Description}}</div>
+            </td>
+            <td class="cell-src"><a href="{{.Package.Source.VcsURI}}">{{.Package.Source.VcsURI}}</a></td>
+            <td class="cell-docs"><a href="https://pkg.go.dev/{{.FQN}}"><img src="https://pkg.go.dev/badge/{{.FQN}}.svg"
+                                                                             alt="Go Reference"></a></td>
+        </tr>
+    {{end}}
+    </tbody>
+</table>
+
+<div class="credits">Generated with <a
+            href="https://github.com/xobotyi/go-vanity-ssg">github.com/xobotyi/go-vanity-ssg</a></div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 out-dir: ./dist
 
-base-uri: dev.gaijin.team/go
+vanity-root: dev.gaijin.team/go
 
 packages:
   - name: "golib"
