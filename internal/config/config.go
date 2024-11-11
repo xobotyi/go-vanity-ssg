@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	OutDir   string    `yaml:"out-dir"`
-	Packages []Package `yaml:"packages"`
+	OutDir       string    `yaml:"out-dir"`
+	TemplatesDir string    `yaml:"templates-dir"`
+	Packages     []Package `yaml:"packages"`
 }
 
 type Package struct {

@@ -1,7 +1,9 @@
 out-dir: ./dist
 
+base-uri: dev.gaijin.team/go
+
 packages:
-  - name: "dev.gaijin.team/go/golib"
+  - name: "golib"
     description: 📦An all-purpose packages library.
     source:
       vcs-type: "git"
@@ -13,7 +15,7 @@ packages:
       vcs-type: "git"
       vcs-uri: "git+ssh://github.com/GaijinEntertainment/golib"
 
-  - name: "dev.gaijin.team/go/go-exhaustruct"
+  - name: "go-exhaustruct"
     description: golang analyzer that finds structures with uninitialized fields
     source:
       vcs-type: "git"
@@ -26,7 +28,7 @@ packages:
       vcs-type: "git"
       vcs-uri: "git+ssh://github.com/GaijinEntertainment/go-exhaustruct"
 
-  - name: "dev.gaijin.team/go/go-nakedefer"
+  - name: "go-nakedefer"
     description: golang analyzer that finds deferred calls that seems to be erroneous
     source:
       vcs-type: "git"
