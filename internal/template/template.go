@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"embed"
 	"html/template"
+	"io/fs"
 	"os"
 	"path"
 	"strings"
 
 	"dev.gaijin.team/go/golib/e"
+	"dev.gaijin.team/go/golib/fields"
+	"dev.gaijin.team/go/golib/must"
 
 	"github.com/xobotyi/go-vanity-ssg/internal/config"
 )
@@ -30,7 +33,7 @@ const (
 	packageTemplate = "package.gohtml"
 )
 
-var templatesNames = []string{indexTemplate, packageTemplate}
+var templatesNames = []string{indexTemplate, packageTemplate} //nolint:gochecknoglobals
 
 func buildTemplatePaths(dir string) []string {
 	globs := make([]string, 0, len(templatesNames))
@@ -40,6 +43,29 @@ func buildTemplatePaths(dir string) []string {
 	}
 
 	return globs
+}
+
+func fileExists(fpath string) bool {
+	_, err := os.Stat(fpath)
+	return !os.IsNotExist(err)
+}
+
+// WriteTemplatesDir writes all embedded templates to output directory.
+func WriteTemplatesDir(dir string, overwrite bool, perms os.FileMode) error {
+	for _, tname := range templatesNames {
+		tpath := path.Join(dir, tname)
+		if fileExists(tpath) && !overwrite {
+			return e.New("target template file already exists", fields.F("path", tpath))
+		}
+
+		tmplContent := must.OK(fs.ReadFile(tpls, path.Join("templates", tname)))
+
+		if err := os.WriteFile(tpath, tmplContent, perms); err != nil {
+			return e.NewFrom("failed to write file", err, fields.F("path", tpath))
+		}
+	}
+
+	return nil
 }
 
 // ParseTemplates from embedded fs and provided override directory.

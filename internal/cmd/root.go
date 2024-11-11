@@ -20,59 +20,22 @@ const (
 )
 
 func NewRootCMD() *cobra.Command {
-	cmd := &cobra.Command{ //nolint:exhaustruct
+	cmd := &cobra.Command{
 		Use:   "go-vanity",
 		Short: "Vanity imports static site generator.",
 
 		SilenceErrors: true,
 		SilenceUsage:  true,
 
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			fs := cmd.Flags()
-
-			outDir := must.OK(fs.GetString("out-dir"))
-			templatesDir := must.OK(fs.GetString("templates-dir"))
-
-			cfg, err := config.Parse(must.OK(fs.GetString("config")))
-			if err != nil {
-				return err //nolint:wrapcheck
-			}
-
-			if cfg.OutDir == "" || outDir != DefaultOutDir {
-				cfg.OutDir = outDir
-			}
-
-			if err := ensureDir(cfg.OutDir); err != nil {
-				return err
-			}
-
-			if templatesDir != "" {
-				cfg.TemplatesDir = templatesDir
-			}
-
-			if cfg.TemplatesDir != "" {
-				if err := pathIsDir(cfg.TemplatesDir); err != nil {
-					return err
-				}
-			}
-
-			vt := template.New(cfg.Packages)
-
-			err = vt.ParseTemplates(cfg.TemplatesDir)
-			if err != nil {
-				return err
-			}
-
-			if err := vt.EmitPackages(cfg.OutDir); err != nil {
-				return err
-			}
-
-			if err := vt.EmitIndex(cfg.OutDir); err != nil {
-				return err
-			}
-
-			return nil
+		Args: cobra.NoArgs,
+		CompletionOptions: cobra.CompletionOptions{
+			DisableDefaultCmd:   true,
+			DisableNoDescFlag:   true,
+			DisableDescriptions: true,
+			HiddenDefaultCmd:    true,
 		},
+
+		RunE: rootRunFn,
 	}
 
 	fs := cmd.Flags()
@@ -86,7 +49,56 @@ func NewRootCMD() *cobra.Command {
 	fs.StringP("config", "c", DefaultConfigPath, "Path to config file (.yaml, .yml).")
 	must.NoErr(cmd.MarkFlagFilename("config", ".yaml", ".yml"))
 
+	cmd.AddCommand(
+		newEmitConfigCMD(),
+		newEmitTemplatesCMD(),
+	)
+
 	return cmd
+}
+
+//revive:disable-next-line:cyclomatic
+func rootRunFn(cmd *cobra.Command, _ []string) error {
+	fs := cmd.Flags()
+
+	outDir := must.OK(fs.GetString("out-dir"))
+	templatesDir := must.OK(fs.GetString("templates-dir"))
+
+	cfg, err := config.Parse(must.OK(fs.GetString("config")))
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	if cfg.OutDir == "" || outDir != DefaultOutDir {
+		cfg.OutDir = outDir
+	}
+
+	if err := ensureDir(cfg.OutDir); err != nil {
+		return err
+	}
+
+	if templatesDir != "" {
+		cfg.TemplatesDir = templatesDir
+	}
+
+	if cfg.TemplatesDir != "" {
+		if err := pathIsDir(cfg.TemplatesDir); err != nil {
+			return err
+		}
+	}
+
+	vt := template.New(cfg.Packages)
+
+	err = vt.ParseTemplates(cfg.TemplatesDir)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	if err := vt.EmitPackages(cfg.OutDir); err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	return vt.EmitIndex(cfg.OutDir) //nolint:wrapcheck
 }
 
 func pathIsDir(path string) error {
@@ -106,7 +118,7 @@ func ensureDir(path string) error {
 	finfo, err := os.Stat(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			if err := os.MkdirAll(path, 0644); err != nil {
+			if err := os.MkdirAll(path, 0644); err != nil { //nolint:mnd
 				return e.NewFrom("failed to create output dir", err)
 			}
 
