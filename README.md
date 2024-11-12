@@ -8,7 +8,8 @@ Main features of this implementation:
 - **Emit index page with list of all packages**  
   Allows to showcase all packages that are supported by vanity import source.
 - **Static pages**  
-  No need in any sort of webserver - you can provide vanity imports even being hosted from GitHub pages.
+  No need in any sort of webserver - you can provide vanity imports even being hosted from GitHub pages. For example,
+  this package distributed using vanity imports, pages are [hosted on GitHub](https://github.com/xobotyi/go).
 - **Public/private packages split.**  
   In cases when you need to enable clients from local networks to be redirected to local repositories and documentation,
   this tool allows emitting static assets for such cases. With a little bit of webserver tweaking you will be able to
@@ -21,6 +22,7 @@ Main features of this implementation:
 ## Installation
 
 ```shell
+go install xobotyi.github.io/go/go-vanity-ssg@latest
 ```
 
 ## Usage
