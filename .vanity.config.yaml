@@ -15,7 +15,7 @@ packages:
         - <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/GaijinEntertainment/golib?style=flat-square">
     private-source:
       vcs-type: "git"
-      vcs-uri: "git+ssh://github.com/GaijinEntertainment/golib"
+      vcs-uri: "git+ssh://our-private-repo.net/golib"
 
   - name: "go-exhaustruct"
     description: golang analyzer that finds structures with uninitialized fields
@@ -27,9 +27,6 @@ packages:
       file-uri: "https://github.com/GaijinEntertainment/go-exhaustruct{/dir}/{file}#L{line}"
       swag:
         - <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/GaijinEntertainment/go-exhaustruct?style=flat-square">
-    private-source:
-      vcs-type: "git"
-      vcs-uri: "git+ssh://github.com/GaijinEntertainment/go-exhaustruct"
 
   - name: "go-nakedefer"
     description: golang analyzer that finds deferred calls that seems to be erroneous
@@ -41,6 +38,3 @@ packages:
       file-uri: "https://github.com/GaijinEntertainment/go-nakedefer{/dir}/{file}#L{line}"
       swag:
         - <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/GaijinEntertainment/go-nakedefer?style=flat-square">
-    private-source:
-      vcs-type: "git"
-      vcs-uri: "git+ssh://github.com/GaijinEntertainment/go-nakedefer"

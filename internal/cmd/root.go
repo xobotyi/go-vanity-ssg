@@ -49,6 +49,12 @@ func NewRootCMD() *cobra.Command {
 	fs.StringP("config", "c", DefaultConfigPath, "Path to config file (.yaml, .yml).")
 	must.NoErr(cmd.MarkFlagFilename("config", ".yaml", ".yml"))
 
+	fs.Bool("public", true, "Emit public packages files.")
+	fs.Bool("private", false, "Emit public packages files.")
+	fs.Bool("no-inherit-public", false, "Do not inherit public packages during private emit.")
+	cmd.MarkFlagsMutuallyExclusive("public", "no-inherit-public")
+	cmd.MarkFlagsMutuallyExclusive("public", "private")
+
 	cmd.AddCommand(
 		newEmitConfigCMD(),
 		newEmitTemplatesCMD(),
@@ -63,6 +69,9 @@ func rootRunFn(cmd *cobra.Command, _ []string) error {
 
 	outDir := must.OK(fs.GetString("out-dir"))
 	templatesDir := must.OK(fs.GetString("templates-dir"))
+
+	public := must.OK(fs.GetBool("public"))
+	private := must.OK(fs.GetBool("private"))
 
 	cfg, err := config.Parse(must.OK(fs.GetString("config")))
 	if err != nil {
@@ -87,18 +96,28 @@ func rootRunFn(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
-	vt := template.New(cfg.VanityRoot, cfg.Packages)
+	vt := template.New(cfg.VanityRoot)
 
 	err = vt.ParseTemplates(cfg.TemplatesDir)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	if err := vt.EmitPackages(cfg.OutDir); err != nil {
+	var pkgs []config.Package
+
+	if public {
+		pkgs = cfg.Packages.Public()
+	}
+
+	if private {
+		pkgs = cfg.Packages.Private(!must.OK(fs.GetBool("no-inherit-public")))
+	}
+
+	if err := vt.EmitPackages(cfg.OutDir, pkgs); err != nil {
 		return err //nolint:wrapcheck
 	}
 
-	return vt.EmitIndex(cfg.OutDir) //nolint:wrapcheck
+	return vt.EmitIndex(cfg.OutDir, pkgs) //nolint:wrapcheck
 }
 
 func pathIsDir(path string) error {

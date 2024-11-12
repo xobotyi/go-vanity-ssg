@@ -19,14 +19,12 @@ import (
 
 type Vanity struct {
 	vanityRoot string
-	pkgs       []config.Package
 	tpl        *template.Template
 }
 
-func New(vanityRoot string, pkgs []config.Package) Vanity {
+func New(vanityRoot string) Vanity {
 	return Vanity{
 		vanityRoot: vanityRoot,
-		pkgs:       pkgs,
 		tpl: template.New("_").Funcs(map[string]any{
 			"unescapeHTML": func(s string) template.HTML {
 				return template.HTML(s) //nolint:gosec
@@ -118,8 +116,8 @@ type indexData struct {
 	Packages []packageData
 }
 
-func (v *Vanity) EmitIndex(outDir string) error {
-	b, err := v.renderIndex()
+func (v *Vanity) EmitIndex(outDir string, pkgs []config.Package) error {
+	b, err := v.renderIndex(pkgs)
 	if err != nil {
 		return err
 	}
@@ -132,15 +130,15 @@ func (v *Vanity) EmitIndex(outDir string) error {
 	return nil
 }
 
-func (v *Vanity) renderIndex() ([]byte, error) {
+func (v *Vanity) renderIndex(pkgs []config.Package) ([]byte, error) {
 	buf := &bytes.Buffer{}
 
 	id := indexData{
 		Title:    v.vanityRoot,
-		Packages: make([]packageData, 0, len(v.pkgs)),
+		Packages: make([]packageData, 0, len(pkgs)),
 	}
 
-	for _, p := range v.pkgs {
+	for _, p := range pkgs {
 		pd, err := v.packageData(p)
 		if err != nil {
 			return nil, err
@@ -158,8 +156,8 @@ func (v *Vanity) renderIndex() ([]byte, error) {
 
 // EmitPackages render all packages from provided config and writes them into dir
 // folder.
-func (v *Vanity) EmitPackages(outDir string) error {
-	for _, pkg := range v.pkgs {
+func (v *Vanity) EmitPackages(outDir string, pkgs []config.Package) error {
+	for _, pkg := range pkgs {
 		b, err := v.renderPackage(pkg)
 		if err != nil {
 			return err

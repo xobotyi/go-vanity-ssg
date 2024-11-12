@@ -54,7 +54,19 @@
         }
 
         .package-fqn {
+            display: flex;
+            align-items: center;
             font-weight: 700;
+        }
+
+        .package-private {
+            line-height: 1rem;
+            font-size: .75rem;
+            border-radius: .25rem;
+            background: #488648;
+            color: #eee;
+            padding: .125rem .5rem;
+            margin-left: 1rem;
         }
 
         .package-description {
@@ -106,7 +118,12 @@
     {{range .Packages}}
         <tr>
             <td class="cell-info">
-                <div class="package-fqn">{{.FQN}}</div>
+                <div class="package-fqn">
+                    <span>{{.FQN}}</span>
+                    {{if .Package.PrivateSource }}
+                        <span class="package-private">private</span>
+                    {{end}}
+                </div>
                 <div class="package-description">{{.Package.Description}}</div>
             </td>
             <td class="cell-src"><a href="{{.Package.Source.VcsURI}}">{{.Package.Source.VcsURI}}</a></td>

@@ -16,23 +16,26 @@ import (
 var cfgExample = config.Config{ //nolint:gochecknoglobals
 	OutDir:       "./dist",
 	TemplatesDir: "",
+	VanityRoot:   "go.example.com",
 	Packages: []config.Package{
 		{
 			Name:        "new-shiny-package",
 			Description: "Description of a package",
-			Source: config.PackageSource{
+			Source: &config.PackageSource{
 				VcsType: "git",
 				VcsURI:  "https://github.com/my/new-shiny-package",
 				URI:     "https://github.com/my/new-shiny-package",
 				DirURI:  "https://github.com/my/new-shiny-package{/dir}",
 				FileURI: "https://github.com/my/new-shiny-package{/dir}/{file}#L{line}",
+				Swag:    nil,
 			},
-			PrivateSource: config.PackageSource{
+			PrivateSource: &config.PackageSource{
 				VcsType: "git",
 				VcsURI:  "https://github.com/my/new-shiny-package",
 				URI:     "https://github.com/my/new-shiny-package",
 				DirURI:  "https://github.com/my/new-shiny-package{/dir}",
 				FileURI: "https://github.com/my/new-shiny-package{/dir}/{file}#L{line}",
+				Swag:    nil,
 			},
 		},
 	},

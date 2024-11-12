@@ -14,14 +14,14 @@ type Config struct {
 
 	VanityRoot string `yaml:"vanity-root"`
 
-	Packages []Package `yaml:"packages"`
+	Packages Packages `yaml:"packages"`
 }
 
 type Package struct {
-	Name          string        `yaml:"name"`
-	Description   string        `yaml:"description"`
-	Source        PackageSource `yaml:"source"`
-	PrivateSource PackageSource `yaml:"private-source"`
+	Name          string         `yaml:"name"`
+	Description   string         `yaml:"description"`
+	Source        *PackageSource `yaml:"source"`
+	PrivateSource *PackageSource `yaml:"private-source"`
 }
 
 type PackageSource struct {
@@ -30,7 +30,46 @@ type PackageSource struct {
 	URI     string   `yaml:"uri"`
 	DirURI  string   `yaml:"dir-uri"`
 	FileURI string   `yaml:"file-uri"`
-	Swag    []string `yaml:"swag"`
+	Swag    []string `yaml:"swag,omitempty"`
+}
+
+type Packages []Package
+
+// Public retrieves a list of packages that only have public source defined.
+// Private source is nilled.
+func (p Packages) Public() []Package {
+	result := make([]Package, 0, len(p))
+
+	for _, pkg := range p {
+		if pkg.Source != nil {
+			pkg.PrivateSource = nil
+			result = append(result, pkg)
+		}
+	}
+
+	return result
+}
+
+// Private returns a list of private packages with its Source fields replaced
+// with private definition. In case withPublic is set to true - method also
+// returns packages that contain public source.
+func (p Packages) Private(withPublic bool) []Package {
+	result := make([]Package, 0, len(p))
+
+	for _, pkg := range p {
+		if pkg.PrivateSource != nil {
+			pkg.Source = pkg.PrivateSource
+			result = append(result, pkg)
+
+			continue
+		}
+
+		if withPublic && pkg.Source != nil {
+			result = append(result, pkg)
+		}
+	}
+
+	return result
 }
 
 // Parse config file.
