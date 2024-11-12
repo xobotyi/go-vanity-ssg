@@ -21,7 +21,7 @@ const (
 
 func NewRootCMD() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "go-vanity",
+		Use:   "go-vanity-ssg",
 		Short: "Vanity imports static site generator.",
 
 		SilenceErrors: true,
