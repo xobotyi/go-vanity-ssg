@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"github.com/xobotyi/go-vanity-ssg/internal/config"
+	"xobotyi.github.io/go/go-vanity-ssg/internal/config"
 )
 
 var cfgExample = config.Config{ //nolint:gochecknoglobals

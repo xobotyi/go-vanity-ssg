@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/xobotyi/go-vanity-ssg/internal/cmd"
+	"xobotyi.github.io/go/go-vanity-ssg/internal/cmd"
 )
 
 func main() {

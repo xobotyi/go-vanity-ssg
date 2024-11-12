@@ -4,7 +4,7 @@ import (
 	"dev.gaijin.team/go/golib/must"
 	"github.com/spf13/cobra"
 
-	"github.com/xobotyi/go-vanity-ssg/internal/template"
+	"xobotyi.github.io/go/go-vanity-ssg/internal/template"
 )
 
 func newEmitTemplatesCMD() *cobra.Command {

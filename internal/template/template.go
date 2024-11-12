@@ -14,7 +14,7 @@ import (
 	"dev.gaijin.team/go/golib/fields"
 	"dev.gaijin.team/go/golib/must"
 
-	"github.com/xobotyi/go-vanity-ssg/internal/config"
+	"xobotyi.github.io/go/go-vanity-ssg/internal/config"
 )
 
 type Vanity struct {

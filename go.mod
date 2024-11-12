@@ -1,4 +1,4 @@
-module github.com/xobotyi/go-vanity-ssg
+module xobotyi.github.io/go/go-vanity-ssg
 
 go 1.23.0
 

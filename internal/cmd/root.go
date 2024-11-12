@@ -10,8 +10,8 @@ import (
 
 	"dev.gaijin.team/go/golib/must"
 
-	"github.com/xobotyi/go-vanity-ssg/internal/config"
-	"github.com/xobotyi/go-vanity-ssg/internal/template"
+	"xobotyi.github.io/go/go-vanity-ssg/internal/config"
+	"xobotyi.github.io/go/go-vanity-ssg/internal/template"
 )
 
 const (
