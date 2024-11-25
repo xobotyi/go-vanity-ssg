@@ -1,13 +1,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>
-        {{- /*gotype: xobotyi.github.io/go/go-vanity-ssg/internal/template.packageData*/ -}}
-        {{.FQN}}
-    </title>
+    {{- /*gotype: xobotyi.github.io/go/go-vanity-ssg/internal/template.packageData*/ -}}
+    <title>{{.FQN}}</title>
+
     <meta name="go-import" content="{{.FQN}} {{.Source.VcsType}} {{.Source.VcsURI}}">
-    <meta name="go-source"
-          content="{{.FQN}} {{.Source.URI}} {{.Source.DirURI}} {{.Source.FileURI}}">
+    <meta name="go-source" content="{{.FQN}} {{.Source.URI}} {{.Source.DirURI}} {{.Source.FileURI}}">
     <meta http-equiv="refresh" content="0; url=https://pkg.go.dev/{{.FQN}}">
 </head>
 <body>
