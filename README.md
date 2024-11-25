@@ -57,3 +57,30 @@ Emit generated html files.
 - **`--public`** - Emit public packages files (default).
 - **`--private`** - Emit private packages files.
 - **`--no-inherit-public`** - Do not include public packages to the list of private packages.
+-
+
+## Configuration
+
+To generate the pages, the tool requires a configuration file to be present.
+The config file must be in `YAML` format. The default location is [./.vanity.config.yaml](./.vanity.config.yaml), but it
+can be changed using the `--config` flag.
+
+### Configuration Options
+
+- **`out-dir`**: Specifies the output directory for the generated HTML files. Default is `./dist`.
+- **`vanity-root`**: The root URL for vanity imports. For example, `dev.gaijin.team/go`.
+- **`packages`**: A list of packages to be included in the vanity import site. Each package can have the following
+  fields:
+    - **`name`**: The name of the package.
+    - **`description`**: A brief description of the package.
+    - **`source`**: Information about the public source repository.
+        - **`vcs-type`**: The version control system type (e.g., `git`).
+        - **`vcs-uri`**: The URI of the version control system.
+        - **`uri`**: The URI of the repository.
+        - **`dir-uri`**: The URI template for directories in the repository.
+        - **`file-uri`**: The URI template for files in the repository.
+        - **`swag`**: A list of additional badges or images to include.
+    - **`private-source`**: same as `source`, but for private package source, this configuration used during generation
+      with `--private` flag.
+
+An example configuration file can be found in the [`.vanity.config.yaml`](./.vanity.config.yaml) file.
