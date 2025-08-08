@@ -17,8 +17,9 @@ packages:
       vcs-type: "git"
       vcs-uri: "git+ssh://our-private-repo.net/golib"
 
-  - name: "go-exhaustruct"
+  - name: "exhaustruct"
     description: golang analyzer that finds structures with uninitialized fields
+    versions: [ 1,2,3,4 ]
     source:
       vcs-type: "git"
       vcs-uri: "https://github.com/GaijinEntertainment/go-exhaustruct"

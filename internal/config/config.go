@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -22,6 +23,7 @@ type Package struct {
 	Description   string         `yaml:"description"`
 	Source        *PackageSource `yaml:"source"`
 	PrivateSource *PackageSource `yaml:"private-source"`
+	Versions      []int          `yaml:"versions,omitempty"`
 }
 
 type PackageSource struct {
@@ -33,10 +35,26 @@ type PackageSource struct {
 	Swag    []string `yaml:"swag,omitempty"`
 }
 
+// VersionedPackages returns versioned package entries if versions are defined.
+func (p Package) VersionedPackages() []Package {
+	if len(p.Versions) == 0 {
+		return nil
+	}
+
+	result := make([]Package, 0, len(p.Versions))
+	for _, version := range p.Versions {
+		versionedPkg := p
+		versionedPkg.Name = fmt.Sprintf("%s/v%d", p.Name, version)
+		versionedPkg.Versions = nil
+		result = append(result, versionedPkg)
+	}
+
+	return result
+}
+
 type Packages []Package
 
 // Public retrieves a list of packages that only have public source defined.
-// Private source is nilled.
 func (p Packages) Public() []Package {
 	result := make([]Package, 0, len(p))
 

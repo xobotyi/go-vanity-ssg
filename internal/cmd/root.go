@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"os"
 
 	"dev.gaijin.team/go/golib/e"
@@ -134,21 +133,9 @@ func pathIsDir(path string) error {
 }
 
 func ensureDir(path string) error {
-	finfo, err := os.Stat(path)
+	err := os.MkdirAll(path, 0744)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			if err := os.MkdirAll(path, 0644); err != nil { //nolint:mnd
-				return e.NewFrom("failed to create output dir", err)
-			}
-
-			return nil
-		}
-
-		return e.NewFrom("unable to stat path", err)
-	}
-
-	if !finfo.IsDir() {
-		return e.New("out path is not a directory")
+		return e.NewFrom("failed to create output dir", err)
 	}
 
 	return nil

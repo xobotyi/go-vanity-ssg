@@ -10,6 +10,8 @@ Main features of this implementation:
 - **Static pages**  
   No need in any sort of webserver - you can provide vanity imports even being hosted from GitHub pages. For example,
   this package distributed using vanity imports, pages are [hosted on GitHub](https://github.com/xobotyi/go).
+- **Versioned packages support**  
+  Generate separate pages for major package versions (e.g., `package/v2.html`, `package/v3.html`) to support Go module versioning.
 - **Public/private packages split.**  
   In cases when you need to enable clients from local networks to be redirected to local repositories and documentation,
   this tool allows emitting static assets for such cases. With a little bit of webserver tweaking you will be able to
@@ -73,6 +75,7 @@ can be changed using the `--config` flag.
   fields:
     - **`name`**: The name of the package.
     - **`description`**: A brief description of the package.
+    - **`versions`**: (Optional) A list of major version numbers to generate versioned package pages for (e.g., `[2, 3]` creates `package/v2.html` and `package/v3.html`).
     - **`source`**: Information about the public source repository.
         - **`vcs-type`**: The version control system type (e.g., `git`).
         - **`vcs-uri`**: The URI of the version control system.
@@ -82,5 +85,26 @@ can be changed using the `--config` flag.
         - **`swag`**: A list of additional badges or images to include.
     - **`private-source`**: same as `source`, but for private package source, this configuration used during generation
       with `--private` flag.
+
+### Versioned Packages
+
+When you specify `versions` in a package configuration, the tool will generate additional HTML files for each major version. For example:
+
+```yaml
+packages:
+  - name: "my-package"
+    description: "Example package"
+    versions: [2, 3, 4]
+    source:
+      # ... source configuration
+```
+
+This will generate:
+- `my-package.html` - Base package page
+- `my-package/v2.html` - Version 2 page  
+- `my-package/v3.html` - Version 3 page
+- `my-package/v4.html` - Version 4 page
+
+The index page will only show the base package (without version suffixes) to keep it clean and organized.
 
 An example configuration file can be found in the [`.vanity.config.yaml`](./.vanity.config.yaml) file.

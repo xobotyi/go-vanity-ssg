@@ -156,17 +156,41 @@ func (v *Vanity) renderIndex(pkgs []config.Package) ([]byte, error) {
 
 // EmitPackages render all packages from provided config and writes them into dir
 // folder.
+//
+// Also emits versioned packages if versions are defined.
 func (v *Vanity) EmitPackages(outDir string, pkgs []config.Package) error {
 	for _, pkg := range pkgs {
-		b, err := v.renderPackage(pkg)
-		if err != nil {
+		if err := v.emitPackage(outDir, pkg); err != nil {
 			return err
 		}
 
-		err = os.WriteFile(path.Join(outDir, path.Base(pkg.Name)+".html"), b, 0644) //nolint:mnd
-		if err != nil {
-			return e.NewFrom("failed to emit package file", err)
+		versionedPkgs := pkg.VersionedPackages()
+		for _, vPkg := range versionedPkgs {
+			if err := v.emitPackage(outDir, vPkg); err != nil {
+				return err
+			}
 		}
+	}
+
+	return nil
+}
+
+func (v *Vanity) emitPackage(outDir string, pkg config.Package) error {
+	b, err := v.renderPackage(pkg)
+	if err != nil {
+		return err
+	}
+
+	filePath := path.Join(outDir, pkg.Name+".html")
+
+	err = os.MkdirAll(path.Dir(filePath), 0744)
+	if err != nil {
+		return e.NewFrom("failed to create output directory", err, fields.F("path", path.Dir(filePath)))
+	}
+
+	err = os.WriteFile(filePath, b, 0744) //nolint:mnd
+	if err != nil {
+		return e.NewFrom("failed to emit package file", err, fields.F("path", filePath))
 	}
 
 	return nil
