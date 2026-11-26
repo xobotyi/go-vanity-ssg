@@ -1,5 +1,5 @@
+###golangci-lint:version: 2.15
 version: "2"
-
 run:
   modules-download-mode: readonly
 
@@ -29,6 +29,10 @@ linters:
     - whitespace
     - zerologlint
     - sloglint
+    - noinlineerr # because that's a stupid rule
+    - wsl # replaced by wsl_v5
+    - exhaustruct # replaced by exhaustruct_v5
+    - gomodguard # replaced by gomodguard_v2
   settings:
     lll:
       line-length: 120
@@ -43,10 +47,6 @@ linters:
       min-complexity: 10
     errcheck:
       exclude-functions:
-        - (*github.com/gin-gonic/gin.Context).Error
-        - (*github.com/gin-gonic/gin.Context).AbortWithError
-        - (*github.com/gin-gonic/gin.Error).SetType
-        - (*github.com/gin-gonic/gin.Error).SetMeta
         - (*bytes.Buffer).Write
         - (*bytes.Buffer).WriteByte
         - (*bytes.Buffer).WriteRune
@@ -56,8 +56,9 @@ linters:
         - (*strings.Builder).WriteRune
         - (*strings.Builder).WriteString
         - (*os.File).Close
-    exhaustruct:
-      exclude:
+    exhaustruct_v5:
+      allow-empty-returns: true
+      ignore-patterns:
         - github\.com/spf13/cobra\.Command
         - net/http\.Transport
         - net/http\.Server
@@ -65,19 +66,15 @@ linters:
         - net/url\.URL
         - crypto/tls\.Config
         - testing/fstest\.MapFile
-        - github\.com/docker/docker/api/types\..*Options
-        - github\.com/prometheus/client_golang/prometheus/collectors\..*Opts
-        - github\.com/prometheus/client_golang/prometheus\..*Opts
-        - github\.com/aws/aws-sdk-go-v2/service/s3/types\..*
-        - go\.mongodb\.org/mongo-driver/mongo/options/FindOptions
-        - github\.com/sashabaranov/go-openai\.ChatCompletion.*
-        - github\.com/sashabaranov/go-openai\..*Message
-        - github\.com/nukosuke/go-zendesk/zendesk\..*Options
     forbidigo:
       forbid:
         - pattern: (?i)(^|\.)print(f|ln)?$
     gomoddirectives:
       replace-local: true
+    gosec:
+      config:
+        G301: "0755"
+        G306: "0666"
     mnd:
       ignored-functions:
         - os\.(OpenFile|WriteFile|Chmod),p?flag\..*
@@ -246,17 +243,22 @@ linters:
         - ProcessSetupDone
         - ReadInConfig
         - google\.golang\.org/grpc/status\.Error.*\(
-    wsl:
-      force-case-trailing-whitespace: 1
-      allow-trailing-comment: true
-      allow-separated-leading-comment: true
+        - dev\.gaijin\.team/go/golib/e\.(New|NewFrom|From|Err\)\.WithFields?)\(
+    wsl_v5:
+      default: all
+      branch-max-lines: 4
+      case-max-lines: 2
+      allow-whole-block: true
+      allow-first-in-block: true
+      disable:
+        - after-expr
 
   exclusions:
     rules:
       - path: "_test\\.go"
         linters:
           - funlen
+          - goconst
     paths:
-      - testdata/.*
       - vendor/.* # ignore vendor
       - .*\.gen\.go$ # ignore generated files
