@@ -188,7 +188,7 @@ func (v *Vanity) emitPackage(outDir string, pkg config.Package) error {
 		return e.NewFrom("failed to create output directory", err, fields.F("path", path.Dir(filePath)))
 	}
 
-	err = os.WriteFile(filePath, b, 0744) //nolint:mnd
+	err = os.WriteFile(filePath, b, 0644) //nolint:mnd
 	if err != nil {
 		return e.NewFrom("failed to emit package file", err, fields.F("path", filePath))
 	}
