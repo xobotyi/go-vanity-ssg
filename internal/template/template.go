@@ -59,7 +59,7 @@ func fileExists(fpath string) bool {
 }
 
 // WriteTemplatesDir writes all embedded templates to output directory.
-func WriteTemplatesDir(dir string, overwrite bool, perms os.FileMode) error {
+func WriteTemplatesDir(dir string, overwrite bool) error {
 	for _, tname := range templatesNames {
 		tpath := path.Join(dir, tname)
 		if fileExists(tpath) && !overwrite {
@@ -68,7 +68,7 @@ func WriteTemplatesDir(dir string, overwrite bool, perms os.FileMode) error {
 
 		tmplContent := must.OK(fs.ReadFile(tpls, path.Join("templates", tname)))
 
-		if err := os.WriteFile(tpath, tmplContent, perms); err != nil {
+		if err := os.WriteFile(tpath, tmplContent, 0644); err != nil {
 			return e.NewFrom("failed to write file", err, fields.F("path", tpath))
 		}
 	}
@@ -93,7 +93,7 @@ func (v *Vanity) ParseTemplates(overrideDir string) (err error) {
 			// ParseGlob returns error that cant be checked with errors.Is
 			// therefore we have to check by substring
 			if err != nil && !strings.Contains(err.Error(), "pattern matches no files") {
-				return err
+				return e.NewFrom("failed to parse override template", err, fields.F("pattern", g))
 			}
 
 			if tt != nil {
@@ -122,7 +122,7 @@ func (v *Vanity) EmitIndex(outDir string, pkgs []config.Package) error {
 		return err
 	}
 
-	err = os.WriteFile(path.Join(outDir, "index.html"), b, 0644) //nolint:mnd
+	err = os.WriteFile(path.Join(outDir, "index.html"), b, 0644)
 	if err != nil {
 		return e.NewFrom("failed to emit index file", err)
 	}
@@ -188,7 +188,7 @@ func (v *Vanity) emitPackage(outDir string, pkg config.Package) error {
 		return e.NewFrom("failed to create output directory", err, fields.F("path", path.Dir(filePath)))
 	}
 
-	err = os.WriteFile(filePath, b, 0644) //nolint:mnd
+	err = os.WriteFile(filePath, b, 0644)
 	if err != nil {
 		return e.NewFrom("failed to emit package file", err, fields.F("path", filePath))
 	}
@@ -197,8 +197,9 @@ func (v *Vanity) emitPackage(outDir string, pkg config.Package) error {
 }
 
 type packageData struct {
-	FQN string
 	config.Package
+
+	FQN string
 }
 
 func (v *Vanity) packageData(p config.Package) (packageData, error) {

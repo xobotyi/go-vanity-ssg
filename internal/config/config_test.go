@@ -9,6 +9,18 @@ import (
 )
 
 func TestPackage_VersionedPackages(t *testing.T) {
+	t.Parallel()
+
+	pkg := func(name, description string, versions []int) config.Package {
+		return config.Package{
+			Name:          name,
+			Description:   description,
+			Source:        nil,
+			PrivateSource: nil,
+			Versions:      versions,
+		}
+	}
+
 	tests := []struct {
 		name     string
 		pkg      config.Package
@@ -16,28 +28,30 @@ func TestPackage_VersionedPackages(t *testing.T) {
 	}{
 		{
 			name:     "package without versions",
-			pkg:      config.Package{Name: "test-package", Description: "Test package"},
+			pkg:      pkg("test-package", "Test package", nil),
 			expected: nil,
 		},
 		{
 			name: "package with versions",
-			pkg:  config.Package{Name: "test-package", Description: "Test package", Versions: []int{2, 3}},
+			pkg:  pkg("test-package", "Test package", []int{2, 3}),
 			expected: []config.Package{
-				{Name: "test-package/v2", Description: "Test package"},
-				{Name: "test-package/v3", Description: "Test package"},
+				pkg("test-package/v2", "Test package", nil),
+				pkg("test-package/v3", "Test package", nil),
 			},
 		},
 		{
 			name: "package with single version",
-			pkg:  config.Package{Name: "another-package", Description: "Another test", Versions: []int{2}},
+			pkg:  pkg("another-package", "Another test", []int{2}),
 			expected: []config.Package{
-				{Name: "another-package/v2", Description: "Another test"},
+				pkg("another-package/v2", "Another test", nil),
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			result := tt.pkg.VersionedPackages()
 			assert.Equal(t, tt.expected, result)
 		})

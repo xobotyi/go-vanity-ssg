@@ -45,6 +45,7 @@ func (p Package) VersionedPackages() []Package {
 	result := make([]Package, 0, len(p.Versions))
 	for _, version := range p.Versions {
 		versionedPkg := p
+
 		versionedPkg.Name = fmt.Sprintf("%s/v%d", p.Name, version)
 		versionedPkg.Versions = nil
 		result = append(result, versionedPkg)
@@ -93,12 +94,13 @@ func (p Packages) Private(withPublic bool) []Package {
 
 // Parse config file.
 func Parse(filePath string) (Config, error) {
-	b, err := os.ReadFile(filePath)
+	b, err := os.ReadFile(filePath) //nolint:gosec // the path is the caller's own --config flag
 	if err != nil {
 		return Config{}, e.NewFrom("failed to read config file", err)
 	}
 
 	var cfg Config
+
 	if err := yaml.Unmarshal(b, &cfg); err != nil {
 		return Config{}, e.NewFrom("failed to parse config file", err)
 	}

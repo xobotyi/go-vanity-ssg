@@ -37,5 +37,5 @@ func emitTemplatesRunE(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	return template.WriteTemplatesDir(dir, overwrite, 0644)
+	return template.WriteTemplatesDir(dir, overwrite)
 }
