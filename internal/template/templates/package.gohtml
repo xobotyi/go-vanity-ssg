@@ -4,7 +4,7 @@
     {{- /*gotype: xobotyi.github.io/go/go-vanity-ssg/internal/template.packageData*/ -}}
     <title>{{.FQN}}</title>
 
-    <meta name="go-import" content="{{.FQN}} {{.Source.VcsType}} {{.Source.VcsURI}}">
+    <meta name="go-import" content="{{.FQN}} {{.Source.VcsType}} {{.Source.VcsURI}}{{with .Source.Subdir}} {{.}}{{end}}">
     <meta name="go-source" content="{{.FQN}} {{.Source.URI}} {{.Source.DirURI}} {{.Source.FileURI}}">
     <meta http-equiv="refresh" content="0; url=https://pkg.go.dev/{{.FQN}}">
 </head>

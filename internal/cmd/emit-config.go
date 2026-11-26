@@ -24,6 +24,7 @@ var cfgExample = config.Config{ //nolint:gochecknoglobals
 			Source: &config.PackageSource{
 				VcsType: "git",
 				VcsURI:  "https://github.com/my/new-shiny-package",
+				Subdir:  "",
 				URI:     "https://github.com/my/new-shiny-package",
 				DirURI:  "https://github.com/my/new-shiny-package{/dir}",
 				FileURI: "https://github.com/my/new-shiny-package{/dir}/{file}#L{line}",
@@ -32,6 +33,7 @@ var cfgExample = config.Config{ //nolint:gochecknoglobals
 			PrivateSource: &config.PackageSource{
 				VcsType: "git",
 				VcsURI:  "https://github.com/my/new-shiny-package",
+				Subdir:  "",
 				URI:     "https://github.com/my/new-shiny-package",
 				DirURI:  "https://github.com/my/new-shiny-package{/dir}",
 				FileURI: "https://github.com/my/new-shiny-package{/dir}/{file}#L{line}",

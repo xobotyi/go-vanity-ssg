@@ -79,6 +79,9 @@ can be changed using the `--config` flag.
     - **`source`**: Information about the public source repository.
         - **`vcs-type`**: The version control system type (e.g., `git`).
         - **`vcs-uri`**: The URI of the version control system.
+        - **`subdir`**: (Optional) The directory of the module inside the repository, for a module that is not at the
+          repository root (e.g., `bindings/go`). The `go` command reads it since Go 1.25, and the module's version tags
+          then carry the directory as a prefix (`bindings/go/v1.2.3`).
         - **`uri`**: The URI of the repository.
         - **`dir-uri`**: The URI template for directories in the repository.
         - **`file-uri`**: The URI template for files in the repository.
