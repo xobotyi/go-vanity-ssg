@@ -77,7 +77,7 @@ linters:
         G306: "0666"
     mnd:
       ignored-functions:
-        - os\.(OpenFile|WriteFile|Chmod),p?flag\..*
+        - os\.(OpenFile|WriteFile|Chmod|MkdirAll),p?flag\..*
         - strconv\.(Format|Parse|Append).*
     revive:
       confidence: 0.8
@@ -236,6 +236,8 @@ linters:
       disable:
         - require-error
     wrapcheck:
+      ignore-package-globs:
+        - xobotyi.github.io/go/go-vanity-ssg/*
       ignore-sig-regexps:
         - OnInitComplete
         - OnSetupDone

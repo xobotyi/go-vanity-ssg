@@ -62,44 +62,26 @@ func NewRootCMD() *cobra.Command {
 	return cmd
 }
 
-//revive:disable-next-line:cyclomatic
 func rootRunFn(cmd *cobra.Command, _ []string) error {
 	fs := cmd.Flags()
-
-	outDir := must.OK(fs.GetString("out-dir"))
-	templatesDir := must.OK(fs.GetString("templates-dir"))
 
 	public := must.OK(fs.GetBool("public"))
 	private := must.OK(fs.GetBool("private"))
 
-	cfg, err := config.Parse(must.OK(fs.GetString("config")))
+	cfg, err := configFromFlags(cmd)
 	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	if cfg.OutDir == "" || outDir != DefaultOutDir {
-		cfg.OutDir = outDir
+		return err
 	}
 
 	if err := ensureDir(cfg.OutDir); err != nil {
 		return err
 	}
 
-	if templatesDir != "" {
-		cfg.TemplatesDir = templatesDir
-	}
-
-	if cfg.TemplatesDir != "" {
-		if err := pathIsDir(cfg.TemplatesDir); err != nil {
-			return err
-		}
-	}
-
 	vt := template.New(cfg.VanityRoot)
 
 	err = vt.ParseTemplates(cfg.TemplatesDir)
 	if err != nil {
-		return err //nolint:wrapcheck
+		return err
 	}
 
 	var pkgs []config.Package
@@ -113,10 +95,38 @@ func rootRunFn(cmd *cobra.Command, _ []string) error {
 	}
 
 	if err := vt.EmitPackages(cfg.OutDir, pkgs); err != nil {
-		return err //nolint:wrapcheck
+		return err
 	}
 
-	return vt.EmitIndex(cfg.OutDir, pkgs) //nolint:wrapcheck
+	return vt.EmitIndex(cfg.OutDir, pkgs)
+}
+
+func configFromFlags(cmd *cobra.Command) (config.Config, error) {
+	fs := cmd.Flags()
+
+	outDir := must.OK(fs.GetString("out-dir"))
+	templatesDir := must.OK(fs.GetString("templates-dir"))
+
+	cfg, err := config.Parse(must.OK(fs.GetString("config")))
+	if err != nil {
+		return config.Config{}, err
+	}
+
+	if cfg.OutDir == "" || outDir != DefaultOutDir {
+		cfg.OutDir = outDir
+	}
+
+	if templatesDir != "" {
+		cfg.TemplatesDir = templatesDir
+	}
+
+	if cfg.TemplatesDir != "" {
+		if err := pathIsDir(cfg.TemplatesDir); err != nil {
+			return config.Config{}, err
+		}
+	}
+
+	return cfg, nil
 }
 
 func pathIsDir(path string) error {
