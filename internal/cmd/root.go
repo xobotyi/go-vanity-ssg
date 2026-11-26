@@ -49,7 +49,7 @@ func NewRootCMD() *cobra.Command {
 	must.NoErr(cmd.MarkFlagFilename("config", ".yaml", ".yml"))
 
 	fs.Bool("public", true, "Emit public packages files.")
-	fs.Bool("private", false, "Emit public packages files.")
+	fs.Bool("private", false, "Emit private packages files.")
 	fs.Bool("no-inherit-public", false, "Do not inherit public packages during private emit.")
 	cmd.MarkFlagsMutuallyExclusive("public", "no-inherit-public")
 	cmd.MarkFlagsMutuallyExclusive("public", "private")
