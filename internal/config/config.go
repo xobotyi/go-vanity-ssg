@@ -29,6 +29,7 @@ type Package struct {
 type PackageSource struct {
 	VcsType string   `yaml:"vcs-type"`
 	VcsURI  string   `yaml:"vcs-uri"`
+	Subdir  string   `yaml:"subdir,omitempty"`
 	URI     string   `yaml:"uri"`
 	DirURI  string   `yaml:"dir-uri"`
 	FileURI string   `yaml:"file-uri"`
